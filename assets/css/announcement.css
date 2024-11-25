@@ -1,0 +1,68 @@
+﻿.inbox-container::-webkit-scrollbar,
+.announcement-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.inbox-container::-webkit-scrollbar-thumb,
+.announcement-container::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 4px;
+}
+
+    .inbox-container::-webkit-scrollbar-thumb:hover,
+    .announcement-container::-webkit-scrollbar-thumb:hover {
+        background-color: #aaa;
+    }
+
+
+.inbox-container, .announcement-container {
+    width: 90%;
+    max-width: 600px;
+    background-color: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border-radius: 8px;
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.message {
+    border-bottom: 1px solid #e0e0e0;
+    padding: 15px 0;
+}
+
+    .message:last-child {
+        border-bottom: none;
+    }
+
+.message-title {
+    display: flex;
+    justify-content: space-between; /* Align items to opposite ends */
+    align-items: center; /* Align vertically */
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.title-text {
+    flex: 1; /* Push datetime to the far right */
+}
+
+.message-datetime {
+    font-size: 14px;
+    color: #999;
+    text-align: right;
+    white-space: nowrap; /* Prevent wrapping */
+}
+
+.message-content {
+    font-size: 16px;
+    color: #666;
+    white-space: nowrap; /* Prevent wrapping to the next line */
+    overflow: hidden; /* Hide overflowing text */
+    text-overflow: ellipsis; /* Add ellipsis (...) to overflowing text */
+}
+
+.message:hover {
+    background-color: #f9f9f9;
+}
