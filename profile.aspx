@@ -1,7 +1,7 @@
 ﻿<%@ Page Title="profile" Language="C#" MasterPageFile="~/Master/Client.Master" AutoEventWireup="true" CodeBehind="profile.aspx.cs" Inherits="fyp.profile" %>
 
 <asp:Content ID="content1" ContentPlaceHolderID="MainContent" runat="server">
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Khitan+Small+Script&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
         /*        * {
@@ -160,7 +160,7 @@
             <div class="profile-container">
                 <!-- Profile Sidebar -->
                 <div class="profile-card">
-                    <img src="Image/user-image.jpg" alt="User Avatar" class="profile-avatar">
+                    <img src="images/user-image.jpg" alt="User Avatar" class="profile-avatar">
                     <h2>John Doe</h2>
                     <p>Student</p>
                     <p>Education Level : Master</p>

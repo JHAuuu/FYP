@@ -357,6 +357,7 @@
     <Content Include="ReturnBookManagement.aspx" />
     <Content Include="ReturnHistory.aspx" />
     <None Include="Scripts\jquery-1.6.4-vsdoc.js" />
+    <Content Include="ReturnViewDetail.aspx" />
     <Content Include="Scripts\jquery-1.6.4.js" />
     <Content Include="Scripts\jquery-1.6.4.min.js" />
     <Content Include="Scripts\jquery.signalR-2.4.3.js" />
@@ -531,6 +532,13 @@
     </Compile>
     <Compile Include="ReturnHistory.aspx.designer.cs">
       <DependentUpon>ReturnHistory.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ReturnViewDetail.aspx.cs">
+      <DependentUpon>ReturnViewDetail.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ReturnViewDetail.aspx.designer.cs">
+      <DependentUpon>ReturnViewDetail.aspx</DependentUpon>
     </Compile>
     <Compile Include="StaffManagement.aspx.cs">
       <DependentUpon>StaffManagement.aspx</DependentUpon>

@@ -146,8 +146,8 @@ namespace fyp
                                     IsPersistent = false                     // Non-persistent cookie
                                 }, identity);
                             }
-
-                            if (Session["UserRole"]?.ToString() == "User")
+                                
+                            if (Session["UserRole"]?.ToString() == "Student" || Session["UserRole"]?.ToString() == "Teacher")
                             {
                                 SetPatron();
                                 Response.Redirect("Home.aspx");
