@@ -28,16 +28,16 @@ namespace fyp.Authentication
                 string userName = identity.FindFirst(ClaimTypes.Name)?.Value;
 
                 // Check if the user has the "Admin" role
-                if (userRole == "User")
-                {
-                    Response.Redirect("/error/401Unauthorized.aspx", true);
-                }
-                else if (userRole == "Admin" || userRole == "Staff")
+                if (userRole == "Admin" || userRole == "Staff")
                 {
                     // Store user details in Session for further use
                     Session["userId"] = userId;
                     Session["UserRole"] = userRole;
                     Session["UserName"] = userName;
+                }
+                else
+                {
+                    Response.Redirect("/error/401Unauthorized.aspx", true);
                 }
             }
             else
