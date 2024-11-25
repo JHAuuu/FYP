@@ -65,7 +65,7 @@ namespace fyp
             string LoanId = e.CommandArgument.ToString();
 
             // Redirect to a detailed view page
-            Response.Redirect($"LoanDetail.aspx?LoanId={LoanId}");
+            Response.Redirect($"ReturnViewDetail.aspx?LoanId={LoanId}");
         }
     }
 }

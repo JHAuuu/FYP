@@ -5,7 +5,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>Return History</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -195,6 +197,33 @@
                 margin: 10px 0;
             }
         }
+        .btn-logout {
+            position: fixed; /* Fixed position */
+            bottom: 80px; /* Distance from the bottom */
+            right: 30px; /* Distance from the left */
+            background-color: #dc3545; /* Red button */
+            color: white;
+            padding: 10px 15px;
+            font-size: 14px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, transform 0.2s;
+            text-transform: uppercase;
+            z-index: 1000; /* Ensure it's always on top */
+        }
+
+            .btn-logout:hover {
+                background-color: #b52a38; /* Darker red on hover */
+                transform: scale(1.05);
+            }
+
+            .btn-logout:active {
+                background-color: #8c202d; /* Even darker red on click */
+                transform: scale(1);
+            }
+
     </style>
 </head>
 <asp:SqlDataSource
@@ -262,6 +291,7 @@
                 </asp:Repeater>
             </div>
         </div>
+        <asp:HyperLink ID="btnLogout" runat="server" CssClass="btn-logout" OnClick="logOut_Click"><i class="fa fa-sign-out">Log Out</i></asp:HyperLink>
         <footer>
             <p>&copy; 2024 Library Management System. All rights reserved.</p>
         </footer>

@@ -25,13 +25,26 @@ namespace fyp
             string UserEmail = txtEmail.Text.Trim();
             string UserPhoneNumber = txtPhone.Text.Trim();
             string UserAddress = txtAddress.Text.Trim();
-            string EduLvl = ddlEducationLevel.SelectedValue;
+            string EduLvl = ddlEducationLevel.SelectedValue; // Will be empty for teachers
             string userPassword = newPass.Text.Trim();
 
-            String UserPassword = encryption.HashPassword(userPassword);
+            string UserPassword = encryption.HashPassword(userPassword);
 
             try
             {
+                // Determine user role based on email domain
+                string UserRole = UserEmail.EndsWith("@student.tarc.edu.my") ? "Student" :
+                                  UserEmail.EndsWith("@tarc.edu.my") ? "Teacher" : null;
+
+                if (UserRole == null)
+                {
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "showalert", "alert('Invalid email domain.');", true);
+                    return;
+                }
+
+                int initialTrustScore = UserRole == "Student" ? 100 : 120;
+                string initialTrustLvl = UserRole == "Student" ? "high" : "very high";
+
                 // Check if username or email already exists
                 string queryFindUser = "SELECT COUNT(*) FROM [User] WHERE UserName = @UserName OR UserEmail = @UserEmail";
                 string[] arrFindUser = new string[4];
@@ -40,7 +53,7 @@ namespace fyp
                 arrFindUser[2] = "@UserEmail";
                 arrFindUser[3] = UserEmail;
 
-                DataTable dt = fyp.DBHelper.ExecuteQuery(queryFindUser, arrFindUser);
+                DataTable dt = DBHelper.ExecuteQuery(queryFindUser, arrFindUser);
 
                 if (dt.Rows.Count > 0 && Convert.ToInt32(dt.Rows[0][0]) > 0)
                 {
@@ -48,12 +61,12 @@ namespace fyp
                 }
                 else
                 {
-                    // Insert new user
-                    string insertUserQuery = "INSERT INTO [User] (UserName, UserEmail, UserPhoneNumber, UserAddress, UserPassword) " +
-                                             "VALUES (@UserName, @UserEmail, @UserPhoneNumber, @UserAddress, @UserPassword); " +
+                    // Insert into [User] table
+                    string insertUserQuery = "INSERT INTO [User] (UserName, UserEmail, UserPhoneNumber, UserAddress, UserPassword, UserRole) " +
+                                             "VALUES (@UserName, @UserEmail, @UserPhoneNumber, @UserAddress, @UserPassword, @UserRole); " +
                                              "SELECT SCOPE_IDENTITY();";
 
-                    string[] arrInsertUser = new string[10];
+                    string[] arrInsertUser = new string[12];
                     arrInsertUser[0] = "@UserName";
                     arrInsertUser[1] = UserName;
                     arrInsertUser[2] = "@UserEmail";
@@ -64,8 +77,10 @@ namespace fyp
                     arrInsertUser[7] = UserAddress;
                     arrInsertUser[8] = "@UserPassword";
                     arrInsertUser[9] = UserPassword;
+                    arrInsertUser[10] = "@UserRole";
+                    arrInsertUser[11] = UserRole;
 
-                    object result = fyp.DBHelper.ExecuteScalar(insertUserQuery, arrInsertUser);
+                    object result = DBHelper.ExecuteScalar(insertUserQuery, arrInsertUser);
 
                     if (result != null)
                     {
@@ -73,38 +88,34 @@ namespace fyp
 
                         // Insert into Patron table
                         string insertPatronQuery = "INSERT INTO Patron (EduLvl, UserId) VALUES (@EduLvl, @UserId); SELECT SCOPE_IDENTITY();";
+
+                        object eduLevelParam;
+                        if (UserRole == "Student")
+                        {
+                            eduLevelParam = EduLvl; // Assign EduLvl for students
+                        }
+                        else
+                        {
+                            eduLevelParam = DBNull.Value; // Assign DBNull.Value for teachers
+                        }
+
                         object[] arrInsertPatron = new object[4];
                         arrInsertPatron[0] = "@EduLvl";
-                        arrInsertPatron[1] = EduLvl;
+                        arrInsertPatron[1] = eduLevelParam;
                         arrInsertPatron[2] = "@UserId";
                         arrInsertPatron[3] = userId;
 
-                        object patronResult = fyp.DBHelper.ExecuteScalar(insertPatronQuery, arrInsertPatron);
+                        object patronResult = DBHelper.ExecuteScalar(insertPatronQuery, arrInsertPatron);
 
                         if (patronResult != null)
                         {
                             int patronId = Convert.ToInt32(patronResult);
 
                             // Insert Trustworthy data
-                            string insertTrustQuery = "INSERT INTO Trustworthy (TrustScore, TrustLvl, PatronId) VALUES (@TrustScore, @TrustLvl, @PatronId)";
-                            object[] arrInsertTrust = new object[6];
-                            arrInsertTrust[0] = "@TrustScore";
-                            arrInsertTrust[1] = 100;
-                            arrInsertTrust[2] = "@TrustLvl";
-                            arrInsertTrust[3] = "high";
-                            arrInsertTrust[4] = "@PatronId";
-                            arrInsertTrust[5] = patronId;
+                            InsertTrustworthyData(patronId, initialTrustScore, initialTrustLvl);
 
-                            int trustRowsAffected = fyp.DBHelper.ExecuteNonQuery(insertTrustQuery, arrInsertTrust);
-
-                            if (trustRowsAffected > 0)
-                            {
-                                ScriptManager.RegisterStartupScript(this, this.GetType(), "showalert", "alert('Registration successful!'); window.location='Login.aspx';", true);
-                            }
-                            else
-                            {
-                                ScriptManager.RegisterStartupScript(this, this.GetType(), "showalert", "alert('Error occurred while saving Trust data.');", true);
-                            }
+                            // Registration successful
+                            ScriptManager.RegisterStartupScript(this, this.GetType(), "showalert", "alert('Registration successful!'); window.location='Login.aspx';", true);
                         }
                         else
                         {
@@ -121,6 +132,25 @@ namespace fyp
             {
                 string alertMessage = "Error: " + ex.Message;
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "showalert", "alert('" + alertMessage.Replace("'", "\\'") + "');", true);
+            }
+        }
+
+        private void InsertTrustworthyData(int patronId, int trustScore, string trustLvl)
+        {
+            string insertTrustQuery = "INSERT INTO Trustworthy (TrustScore, TrustLvl, PatronId) VALUES (@TrustScore, @TrustLvl, @PatronId)";
+            string[] arrInsertTrust = new string[6];
+            arrInsertTrust[0] = "@TrustScore";
+            arrInsertTrust[1] = trustScore.ToString();
+            arrInsertTrust[2] = "@TrustLvl";
+            arrInsertTrust[3] = trustLvl;
+            arrInsertTrust[4] = "@PatronId";
+            arrInsertTrust[5] = patronId.ToString();
+
+            int trustRowsAffected = DBHelper.ExecuteNonQuery(insertTrustQuery, arrInsertTrust);
+
+            if (trustRowsAffected <= 0)
+            {
+                throw new Exception("Error occurred while saving Trust data.");
             }
         }
 

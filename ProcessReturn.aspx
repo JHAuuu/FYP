@@ -4,9 +4,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>Return Book</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
         body {
             font-family: 'Poppins', sans-serif;
             margin: 0;
@@ -178,14 +180,14 @@
 
         .btn-logout {
             position: fixed; /* Fixed position */
-            bottom: 75px; /* Distance from the bottom */
-            left: 20px; /* Distance from the left */
+            bottom: 80px; /* Distance from the bottom */
+            right: 30px; /* Distance from the left */
             background-color: #dc3545; /* Red button */
             color: white;
-            padding: 10px 20px;
+            padding: 10px 15px;
             font-size: 14px;
             border: none;
-            border-radius: 25px;
+            border-radius: 50px;
             cursor: pointer;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
             transition: background-color 0.3s, transform 0.2s;
@@ -259,7 +261,7 @@
                 <button type="button" class="btn-stop" onclick="stopScanning()">Stop Scanning</button>
             </div>
         </div>
-        <asp:HyperLink ID="btnLogout" runat="server" CssClass="btn-logout" OnClick="logOut_Click"><i class="fa fa-sign-out"></i></asp:HyperLink>
+        <asp:HyperLink ID="btnLogout" runat="server" CssClass="btn-logout" OnClick="logOut_Click"><i class="fa fa-sign-out">Log Out</i></asp:HyperLink>
         <footer>
             <p>&copy; 2024 Library Management System. All rights reserved.</p>
         </footer>

@@ -21,7 +21,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: url("Image/login.jpeg") no-repeat;
+            background: url("images/login.jpeg") no-repeat;
             background-size: cover;
             background-position: center;
         }
@@ -175,9 +175,14 @@
                 <asp:TextBox ID="txtEmail" runat="server" TextMode="Email" placeholder="Enter email" CssClass="field"></asp:TextBox>
                 <i class='bx bx-envelope'></i>
             </div>
-            <asp:RegularExpressionValidator ID="revEmail" runat="server" ControlToValidate="txtEmail"
-                ValidationExpression="^[^\s@]+@student\.tarc\.edu\.my$" ErrorMessage="Invalid email format. Use @student.tarc.edu.my domain."
-                CssClass="error-message" Display="Dynamic" /><br />
+            <asp:RegularExpressionValidator 
+                ID="revEmail" 
+                runat="server" 
+                ControlToValidate="txtEmail"
+                ValidationExpression="^[^\s@]+@(student\.tarc\.edu\.my|tarc\.edu\.my)$"
+                ErrorMessage="Invalid email format. Use @student.tarc.edu.my for students or @tarc.edu.my for teachers."
+                CssClass="error-message" 
+                Display="Dynamic" /><br />
 
             <!-- Phone Number Field -->
             <label for="txtPhone">Phone Number</label>
@@ -200,9 +205,22 @@
 
             <br />
             <!-- Education Level Field -->
-            <label class="education-level">Education Level</label>
-            <asp:RequiredFieldValidator ID="rfvEducationLevel" runat="server" ControlToValidate="ddlEducationLevel" InitialValue="" ErrorMessage="*Please select an education level" CssClass="error-message" Display="Dynamic"></asp:RequiredFieldValidator><br />
-            <asp:DropDownList ID="ddlEducationLevel" runat="server" CssClass="education-level-dropdown">
+            <label class="education-level" id="lblEducationLevel" style="display:none;">Education Level</label>
+            <asp:RequiredFieldValidator 
+                ID="rfvEducationLevel" 
+                runat="server" 
+                ControlToValidate="ddlEducationLevel" 
+                InitialValue="" 
+                ErrorMessage="*Please select an education level" 
+                CssClass="error-message" 
+                Display="Dynamic" 
+                style="display:none;" />
+            <br />
+            <asp:DropDownList 
+                ID="ddlEducationLevel" 
+                runat="server" 
+                CssClass="education-level-dropdown" 
+                style="display:none;">
                 <asp:ListItem Text="Diploma" Value="Diploma" />
                 <asp:ListItem Text="Degree" Value="Degree" />
                 <asp:ListItem Text="Master" Value="Master" />
@@ -232,6 +250,31 @@
 </body>
 
 <script>
+    document.getElementById("<%= txtEmail.ClientID %>").addEventListener("input", function () {
+        const email = this.value.trim();
+        const eduLevelLabel = document.getElementById("lblEducationLevel");
+        const eduLevelDropdown = document.getElementById("<%= ddlEducationLevel.ClientID %>");
+        const eduLevelValidator = document.getElementById("<%= rfvEducationLevel.ClientID %>");
+
+        // Check if email belongs to a student
+        if (email.endsWith("@student.tarc.edu.my")) {
+            // Show the education level fields
+            eduLevelLabel.style.display = "block";
+            eduLevelDropdown.style.display = "block";
+            eduLevelValidator.style.display = "block";
+            eduLevelValidator.enabled = true; // Enable validator for students
+        } else {
+            // Hide the education level fields
+            eduLevelLabel.style.display = "none";
+            eduLevelDropdown.style.display = "none";
+            eduLevelValidator.style.display = "none";
+            eduLevelValidator.enabled = false; // Disable validator for teachers
+
+            // Clear any selected value in the dropdown
+            eduLevelDropdown.value = "";
+        }
+    });
+
     document.getElementById("toggleNewPass").addEventListener("click", function () {
         const passwordField1 = document.getElementById("<%= newPass.ClientID %>");
         const type = passwordField1.getAttribute("type") === "password" ? "text" : "password";
