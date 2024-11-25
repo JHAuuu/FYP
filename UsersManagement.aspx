@@ -229,7 +229,7 @@
         </div>
     </div>
     <asp:Label ID="MessageBox" runat="server" ForeColor="Red"></asp:Label>
-    <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="SELECT [UserId], [UserName], [UserAddress], [UserEmail], [UserPhoneNumber] FROM [User] WHERE ([UserRole] = @UserRole AND [IsDeleted] = 0)" UpdateCommand="UPDATE [User]
+    <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="SELECT [UserId], [UserName], [UserAddress], [UserEmail], [UserPhoneNumber] FROM [User] WHERE ([UserRole] IN ('Student', 'Teacher') AND [IsDeleted] = 0)" UpdateCommand="UPDATE [User]
 SET 
     [UserName] = @UserName,
     [UserAddress] = @UserAddress,
@@ -237,9 +237,6 @@ SET
     [UserPhoneNumber] = @UserPhoneNumber
 WHERE 
     [UserId] = @UserId;">
-        <SelectParameters>
-            <asp:Parameter DefaultValue="User" Name="UserRole" Type="String" />
-        </SelectParameters>
         <UpdateParameters>
             <asp:Parameter Name="UserName" />
             <asp:Parameter Name="UserAddress" />

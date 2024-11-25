@@ -265,7 +265,7 @@ namespace fyp
                 [User].UserEmail, 
                 [User].UserPhoneNumber 
             FROM [User] 
-            WHERE [UserRole] = 'User' AND [IsDeleted] = 0";
+            WHERE [UserRole] IN ('Student', 'Teacher') AND [IsDeleted] = 0";
 
             try
             {
@@ -278,19 +278,20 @@ namespace fyp
                     FROM [User] AS U
                     INNER JOIN Patron AS P ON U.UserId = P.UserId
                     INNER JOIN Loan AS L ON P.PatronId = L.PatronId
-                    WHERE L.Status IN ('Borrowed', 'Overdue')
+                    WHERE L.Status = 'loaning'
                 )";
                 }
                 else if (selectedValue == "Overdue")
                 {
                     SqlDataSource1.SelectCommand = baseQuery + @"
-                AND [User].UserId IN (
-                    SELECT DISTINCT CAST(U.UserId AS INT)
-                    FROM [User] AS U
-                    INNER JOIN Patron AS P ON U.UserId = P.UserId
-                    INNER JOIN Loan AS L ON P.PatronId = L.PatronId
-                    WHERE L.Status = 'Overdue'
-                )";
+                    AND [User].UserId IN (
+                        SELECT DISTINCT CAST(U.UserId AS INT)
+                        FROM [User] AS U
+                        INNER JOIN Patron AS P ON U.UserId = P.UserId
+                        INNER JOIN Loan AS L ON P.PatronId = L.PatronId
+                        WHERE L.EndDate < CAST(GETDATE() AS DATE) 
+                        AND L.LatestReturn IS NOT NULL
+                    )";
                 }
                 else
                 {

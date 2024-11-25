@@ -228,6 +228,10 @@ namespace fyp
             Response.Redirect($"ReturnHistory.aspx?userid={userId}");
         }
 
-
+        protected void logOut_Click(object sender, EventArgs e)
+        {
+            int userId = Convert.ToInt32(Session["UserId"]);
+            Response.Redirect($"ReturnHistory.aspx?userid={userId}");
+        }
     }
 }
