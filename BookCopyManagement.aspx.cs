@@ -153,7 +153,7 @@ namespace fyp
                     bookData.AverageRating = bookData.RatingCount > 0 ?
                         (int)Math.Round((double)bookData.TotalRating / bookData.RatingCount) : 0;
                     bookData.CoverImageBase64 = row["BookImage"] != DBNull.Value ?
-                        "data:image/png;base64," + Convert.ToBase64String((byte[])row["BookImage"]) : "Image/defaultCoverBook.png";
+                        "data:image/png;base64," + Convert.ToBase64String((byte[])row["BookImage"]) : "~/images/defaultCoverBook.png";
 
                     // Save the BookData object in session
                     Session["BookData"] = bookData;

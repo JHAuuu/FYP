@@ -1,7 +1,7 @@
 ﻿<%@ Page Title="BookCopyManagement" MasterPageFile="~/Master/DashMasterPage.Master" Language="C#" AutoEventWireup="true" CodeBehind="BookCopyManagement.aspx.cs" Inherits="fyp.BookCopyManagement" %>
 
 <asp:Content ID="content1" ContentPlaceHolderID="MainContent" runat="server">
-    <link rel="stylesheet" href="css/BookCopyManagement.css?v=1.0">
+    <link rel="stylesheet" href="assets/css/BookCopyManagement.css?v=1.0">
     <asp:HiddenField ID="hiddenBookCopyId" runat="server" />
     <style>
         .modal {
@@ -357,7 +357,7 @@ WHERE
                         <asp:TemplateField HeaderText="BookCopyImage">
                             <ItemTemplate>
                                 <asp:Image ID="imgBookCopy" runat="server"
-                                    ImageUrl='<%# Eval("BookCopyImage") != DBNull.Value ? "data:image/png;base64," + Convert.ToBase64String((byte[])Eval("BookCopyImage")) : "~/Image/defaultCoverBook.png" %>'
+                                    ImageUrl='<%# Eval("BookCopyImage") != DBNull.Value ? "data:image/png;base64," + Convert.ToBase64String((byte[])Eval("BookCopyImage")) : "~/images/defaultCoverBook.png" %>'
                                     AlternateText="No Image Available" Width="100px" Height="150px" />
                             </ItemTemplate>
                             <EditItemTemplate>

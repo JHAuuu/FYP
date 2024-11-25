@@ -175,14 +175,41 @@
                 font-size: 12px;
             }
         }
+
+        .btn-logout {
+            position: fixed; /* Fixed position */
+            bottom: 75px; /* Distance from the bottom */
+            left: 20px; /* Distance from the left */
+            background-color: #dc3545; /* Red button */
+            color: white;
+            padding: 10px 20px;
+            font-size: 14px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, transform 0.2s;
+            text-transform: uppercase;
+            z-index: 1000; /* Ensure it's always on top */
+        }
+
+            .btn-logout:hover {
+                background-color: #b52a38; /* Darker red on hover */
+                transform: scale(1.05);
+            }
+
+            .btn-logout:active {
+                background-color: #8c202d; /* Even darker red on click */
+                transform: scale(1);
+            }
     </style>
 </head>
 <body>
     <form id="form1" runat="server">
         <header>
             <h1>Library Management System - Return Book</h1>
+            <asp:Button ID="btnViewHistory" runat="server" Text="View History" CssClass="btn-history" OnClick="btnViewHistory_Click" />
         </header>
-        <asp:Button ID="btnViewHistory" runat="server" Text="View History" CssClass="btn-history" OnClick="btnViewHistory_Click" />
         <div class="container">
             <div id="NoRecords" runat="server" visible="false" class="no-records">
                 No active loans found. You don't have any books to return.
@@ -232,7 +259,7 @@
                 <button type="button" class="btn-stop" onclick="stopScanning()">Stop Scanning</button>
             </div>
         </div>
-
+        <asp:HyperLink ID="btnLogout" runat="server" CssClass="btn-logout" OnClick="logOut_Click"><i class="fa fa-sign-out"></i></asp:HyperLink>
         <footer>
             <p>&copy; 2024 Library Management System. All rights reserved.</p>
         </footer>
@@ -241,10 +268,20 @@
     <script>
         let detectedISBN = "";
         let targetISBN = "";
+        let isProcessing = false; // Flag to prevent multiple alerts
+        let isScanning = false; // Flag to prevent multiple scanner instances
 
         // Start the scanner
         function startScanning(expectedISBN) {
+            if (isScanning) {
+                alert("Scanner is already running. Please stop it before starting a new scan.");
+                return;
+            }
+
             targetISBN = expectedISBN;
+            detectedISBN = "";
+            isProcessing = false; // Reset the flag
+            isScanning = true; // Set the scanning flag
             document.getElementById('scanner-container').style.display = 'block';
 
             Quagga.init({
@@ -259,34 +296,59 @@
                     }
                 },
                 decoder: {
-                    readers: ["ean_reader"]
+                    readers: [
+                        "ean_reader",          // EAN barcode reader
+                        "code_128_reader",     // Code 128 (common for libraries)
+                        "upc_reader"           // UPC barcodes (fallback for some books)
+                    ],
+                    multiple: false          // Only scan one barcode at a time
+                },
+                locate: true,                // Try to locate the barcode in the image
+                locator: {
+                    halfSample: true,        // Speeds up processing
+                    patchSize: "medium",     // Area of image to scan
+                    debug: {
+                        drawBoundingBox: true,
+                        showCanvas: true,
+                        showPatches: true,
+                        showFoundPatches: true,
+                        showSkeleton: true
+                    }
                 }
             }, function (err) {
                 if (err) {
                     console.error(err);
                     alert("Scanner initialization failed. Please try again.");
+                    isScanning = false; // Reset scanning flag on error
                     return;
                 }
                 Quagga.start();
             });
 
             Quagga.onDetected(function (data) {
+                if (isProcessing) return; // Prevent multiple detections
                 detectedISBN = data.codeResult.code;
                 document.getElementById('detected-isbn').innerText = detectedISBN;
 
                 if (detectedISBN === targetISBN) {
-                    Quagga.stop();
+                    isProcessing = true; // Set the flag to true
+                    stopScanning();
                     processReturn();
                 } else {
+                    isProcessing = true; // Set the flag to true to avoid repeated alerts
                     alert("Scanned ISBN does not match. Please try again.");
+                    setTimeout(() => isProcessing = false, 2000); // Reset the flag after 2 seconds
                 }
             });
         }
 
         // Stop the scanner
         function stopScanning() {
-            Quagga.stop();
-            document.getElementById('scanner-container').style.display = 'none';
+            if (isScanning) {
+                Quagga.stop(); // Properly stop the scanner
+                isScanning = false; // Reset the scanning flag
+                document.getElementById('scanner-container').style.display = 'none';
+            }
         }
 
         // Process the return
@@ -305,6 +367,7 @@
                 }
             });
         }
+
     </script>
 </body>
 </html>

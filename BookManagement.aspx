@@ -131,7 +131,7 @@
                         <div class="title"><%# Eval("BookTitle") %></div>
                         <div class="image">
                             <asp:Image ID="imageBook" runat="server"
-                                ImageUrl='<%# Eval("BookImage") != DBNull.Value ? "data:image/png;base64," + Convert.ToBase64String((byte[])Eval("BookImage")) : "Image/defaultCoverBook.png" %>'
+                                ImageUrl='<%# Eval("BookImage") != DBNull.Value ? "data:image/png;base64," + Convert.ToBase64String((byte[])Eval("BookImage")) : "images/defaultCoverBook.png" %>'
                                 AlternateText='<%# Eval("BookTitle") %>' />
                         </div>
                         <b>ID: <%# Eval("BookId") %></b>

@@ -99,11 +99,12 @@ namespace fyp
 
                     // Get the loan ID, patron ID, and other details using the ISBN
                     string query = @"
-                SELECT L.LoanId, L.PatronId, L.EndDate, P.TotalFine, P.DatePayed, BC.BookCopyId
-                FROM Loan L
-                INNER JOIN BookCopy BC ON L.BookCopyId = BC.BookCopyId
-                LEFT JOIN Punishment P ON L.LoanId = P.LoanId
-                WHERE BC.ISBN = @ISBN AND L.Status = 'loaning'";
+            SELECT L.LoanId, L.PatronId, L.EndDate, P.TotalFine, P.DatePayed, BC.BookCopyId, T.TrustScore
+            FROM Loan L
+            INNER JOIN BookCopy BC ON L.BookCopyId = BC.BookCopyId
+            LEFT JOIN Punishment P ON L.LoanId = P.LoanId
+            LEFT JOIN Trustworthy T ON L.PatronId = T.PatronId
+            WHERE BC.ISBN = @ISBN AND L.Status = 'loaning'";
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
@@ -119,6 +120,7 @@ namespace fyp
                                 decimal? totalFine = reader.IsDBNull(3) ? (decimal?)null : reader.GetDecimal(3);
                                 DateTime? datePayed = reader.IsDBNull(4) ? (DateTime?)null : reader.GetDateTime(4);
                                 int bookCopyId = reader.GetInt32(5);
+                                int currentTrustScore = reader.GetInt32(6);
 
                                 reader.Close();
 
@@ -126,9 +128,9 @@ namespace fyp
                                 DateTime today = DateTime.Today;
 
                                 string updateLoanQuery = @"
-                            UPDATE Loan
-                            SET LatestReturn = @Today, Status = 'returned'
-                            WHERE LoanId = @LoanId";
+                        UPDATE Loan
+                        SET LatestReturn = @Today, Status = 'returned'
+                        WHERE LoanId = @LoanId";
 
                                 using (SqlCommand updateLoanCommand = new SqlCommand(updateLoanQuery, connection))
                                 {
@@ -139,9 +141,9 @@ namespace fyp
 
                                 // Update BookCopy table: Set IsAvailable to true
                                 string updateBookCopyQuery = @"
-                            UPDATE BookCopy
-                            SET IsAvailable = 1
-                            WHERE BookCopyId = @BookCopyId";
+                        UPDATE BookCopy
+                        SET IsAvailable = 1
+                        WHERE BookCopyId = @BookCopyId";
 
                                 using (SqlCommand updateBookCopyCommand = new SqlCommand(updateBookCopyQuery, connection))
                                 {
@@ -149,19 +151,62 @@ namespace fyp
                                     updateBookCopyCommand.ExecuteNonQuery();
                                 }
 
-                                // Check for penalties
-                                if (today > endDate && totalFine.HasValue && !datePayed.HasValue)
+                                // Calculate TrustScore adjustment
+                                int trustScoreAdjustment;
+                                if (today > endDate)
                                 {
-                                    // Late return with a penalty
-                                    return $"The book with ISBN: {isbn} has been successfully returned. " +
-                                           $"Since you are late, you will be penalized with a fine of RM{totalFine}. " +
-                                           "Please log in to the library system to pay off the fine.";
+                                    // Late return: Deduct TrustScore based on days late
+                                    int daysLate = (today - endDate).Days;
+
+                                    if (daysLate <= 3)
+                                    {
+                                        trustScoreAdjustment = -2; // Deduct 2 points for 1-3 days late
+                                    }
+                                    else if (daysLate <= 7)
+                                    {
+                                        trustScoreAdjustment = -5; // Deduct 5 points for 4-7 days late
+                                    }
+                                    else
+                                    {
+                                        trustScoreAdjustment = -10; // Deduct 10 points for 8+ days late
+                                    }
+                                }
+                                else if (currentTrustScore < 120) // Check if TrustScore is less than 120
+                                {
+                                    // On-time or early return: Add TrustScore
+                                    trustScoreAdjustment = 5; // Add 5 points for good behavior
                                 }
                                 else
                                 {
-                                    // Successful return without penalty
-                                    return $"The book with ISBN: {isbn} has been successfully returned.";
+                                    trustScoreAdjustment = 0; // No increase if TrustScore is already 120
                                 }
+
+                                // Update TrustScore
+                                string updateTrustScoreQuery = @"
+                        UPDATE Trustworthy
+                        SET TrustScore = CASE 
+                            WHEN TrustScore + @Adjustment > 120 THEN 120
+                            WHEN TrustScore + @Adjustment < 0 THEN 0
+                            ELSE TrustScore + @Adjustment
+                        END
+                        WHERE PatronId = @PatronId";
+
+                                using (SqlCommand updateTrustScoreCommand = new SqlCommand(updateTrustScoreQuery, connection))
+                                {
+                                    updateTrustScoreCommand.Parameters.AddWithValue("@Adjustment", trustScoreAdjustment);
+                                    updateTrustScoreCommand.Parameters.AddWithValue("@PatronId", patronId);
+                                    updateTrustScoreCommand.ExecuteNonQuery();
+                                }
+
+                                return $"The book with ISBN: {isbn} has been successfully returned. " +
+                                       (trustScoreAdjustment < 0
+                                           ? $"Since you returned late, your TrustScore was reduced by {-trustScoreAdjustment} points."
+                                           : trustScoreAdjustment > 0
+                                               ? $"Thank you for returning on time! Your TrustScore increased by {trustScoreAdjustment} points."
+                                               : $"Thank you for returning on time! Your TrustScore remains at the maximum of 120.") +
+                                       (totalFine.HasValue && !datePayed.HasValue
+                                           ? $" You also need to pay a fine of RM{totalFine}. Please log in to settle the fine."
+                                           : "");
                             }
                             else
                             {
