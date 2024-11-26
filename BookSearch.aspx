@@ -10,11 +10,12 @@
 </asp:Content>
 <asp:Content ID="Content3" ContentPlaceHolderID="MainContent" runat="server">
     <div class="search-bar-container">
-                    <form class="search-form" runat="server">
-                        <asp:TextBox runat="server" ID="tbSearch" placeholder="Search here..."></asp:TextBox>
-                        <asp:Button runat="server" Text="Search" ID="btnSearch" OnClick="Page_Load"/>
-                    </form>
-                </div>
+        <form class="search-form" runat="server">
+            <asp:TextBox runat="server" ID="tbSearch" placeholder="Search here..."></asp:TextBox>
+            <asp:Button runat="server" Text="Search" ID="btnSearch" OnClick="Page_Load" />
+        </form>
+        <small style="font-size: .9286rem;">Search Tips ::<asp:HyperLink ID="btnAdvanceSearch" runat="server" Style="border: none; color: #2b74a9;" NavigateUrl="~/AdvancedSearch.aspx">Advanced Search</asp:HyperLink></small>
+    </div>
                 <div class="book-item-container">
                                 <!-- Repeat similar structure for each book item, or dynamically generate -->
             <asp:Panel ID="pnlBooks" runat="server">

@@ -227,6 +227,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AdvancedSearch.aspx" />
     <Content Include="Announcement.aspx" />
     <Content Include="AnnouncementManagement.aspx" />
     <Content Include="assets\css\announcement.css" />
@@ -370,6 +371,13 @@
   <ItemGroup>
     <Compile Include="AdminPage.cs">
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdvancedSearch.aspx.cs">
+      <DependentUpon>AdvancedSearch.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdvancedSearch.aspx.designer.cs">
+      <DependentUpon>AdvancedSearch.aspx</DependentUpon>
     </Compile>
     <Compile Include="Announcement.aspx.cs">
       <DependentUpon>Announcement.aspx</DependentUpon>
