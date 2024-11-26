@@ -11,12 +11,38 @@ namespace fyp
 {
     public class PdfUtility
     {
+        public class PageEvents : iTextSharp.text.pdf.PdfPageEventHelper
+        {
+            public override void OnEndPage(PdfWriter writer, Document document)
+            {
+                base.OnEndPage(writer, document);
+
+                // Define font for page number
+                iTextSharp.text.Font font = iTextSharp.text.FontFactory.GetFont("Arial", 10, iTextSharp.text.Font.NORMAL, BaseColor.BLACK);
+
+                // Get current page number
+                int pageNumber = writer.PageNumber;
+
+                // Define the position (bottom-center)
+                float x = document.PageSize.GetLeft(0) + (document.PageSize.Width / 2);
+                float y = document.PageSize.GetBottom(30); // 30 units from the bottom
+
+                // Create the page number text and add it to the document
+                string pageText = $"Page {pageNumber}";
+                ColumnText.ShowTextAligned(writer.DirectContent, Element.ALIGN_CENTER, new Phrase(pageText, font), x, y, 0);
+            }
+        }
+
         public static byte[] GenerateLoanPdfReport(string title, IEnumerable<LoanReport> reportData, DateTime startDate, DateTime endDate)
         {
             using (MemoryStream memoryStream = new MemoryStream())
             {
                 Document document = new Document(PageSize.A4.Rotate(), 50, 50, 25, 25); // Rotate for more columns
                 PdfWriter writer = PdfWriter.GetInstance(document, memoryStream);
+
+                // Assign the page event handler to the PdfWriter
+                writer.PageEvent = new PageEvents();
+
                 document.Open();
 
                 // Create the title with background and text color
@@ -158,19 +184,6 @@ namespace fyp
                     dataCell = new PdfPCell(new Phrase(item.LatestReturn.HasValue ? item.LatestReturn.Value.ToShortDateString() : "N/A", cellFont)){ Border = iTextSharp.text.Rectangle.NO_BORDER};
                     table.AddCell(dataCell);
 
-
-                    // Add horizontal line after each row
-                    hrCell = new PdfPCell(new Phrase(" ")) // Empty cell
-                    {
-                        Colspan = 6, // Span across all columns
-                        BorderWidthTop = 1f, // Line thickness
-                        BorderWidthBottom = 0f, // No bottom border
-                        BorderWidthLeft = 0f,
-                        BorderWidthRight = 0f,
-                        BorderColorTop = BaseColor.GRAY // Line color
-                    };
-                    table.AddCell(hrCell);
-
                     // Add the table to the document
                     document.Add(table);
 
@@ -202,6 +215,10 @@ namespace fyp
             {
                 Document document = new Document(PageSize.A4.Rotate(), 50, 50, 25, 25); // Rotate for more columns
                 PdfWriter writer = PdfWriter.GetInstance(document, memoryStream);
+
+                // Assign the page event handler to the PdfWriter
+                writer.PageEvent = new PageEvents();
+
                 document.Open();
 
                 // Create the title with background and text color
@@ -343,18 +360,6 @@ namespace fyp
 
                     dataCell = new PdfPCell(new Phrase(item.CategoryNames, cellFont)) { Border = iTextSharp.text.Rectangle.NO_BORDER };
                     table.AddCell(dataCell);
-
-                    // Add horizontal line after each record
-                    hrCell = new PdfPCell(new Phrase(" ")) // Empty cell
-                    {
-                        Colspan = 6, // Span across all columns
-                        BorderWidthTop = 1f, // Line thickness
-                        BorderWidthBottom = 0f, // No bottom border
-                        BorderWidthLeft = 0f,
-                        BorderWidthRight = 0f,
-                        BorderColorTop = BaseColor.GRAY // Line color
-                    };
-                    table.AddCell(hrCell);
 
                     document.Add(table); // Add table to document
 
