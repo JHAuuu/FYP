@@ -154,8 +154,9 @@ namespace fyp
                             }
                             else if (Session["UserRole"]?.ToString() == "Admin" || Session["UserRole"]?.ToString() == "Staff")
                             {
-                                //Response.Redirect("Home.aspx");
-                                Response.Redirect("DashManagement.aspx");
+                                SetPatron();
+                                Response.Redirect("Home.aspx");
+                                //Response.Redirect("DashManagement.aspx");
                             }
                         }
                         else

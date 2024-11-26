@@ -32,8 +32,9 @@ namespace fyp
             }
             else
             {
+                Response.Redirect("/error/401Unauthorized.aspx", true);
                 // Redirect to Login if the user is not authenticated
-                Response.Redirect("Login.aspx", true);
+                //Response.Redirect("Login.aspx", true);
             }
         }
     }
