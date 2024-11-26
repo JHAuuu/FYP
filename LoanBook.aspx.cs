@@ -114,7 +114,7 @@ AND IsAvailable = 1
         SELECT StartDate, EndDate
         FROM Loan
         WHERE BookCopyId = @bookId
-        AND (Status = 'loaning' OR Status = 'preloaning')
+        AND Status = 'loaning'
     ";
 
             // Execute the query and get results

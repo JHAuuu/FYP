@@ -376,6 +376,10 @@ namespace fyp
 
                     // Notify the specific user using SignalR
                     var context = GlobalHost.ConnectionManager.GetHubContext<NotificationHub>();
+                    if (string.IsNullOrEmpty(NotificationHub.GetConnectionId(userId)))
+                    {
+                        throw new Exception($"No active SignalR connection found for user {userId}.");
+                    }
                     context.Clients.Client(NotificationHub.GetConnectionId(userId))
                     .broadcastInbox(inboxTitle, inboxContent, sendAt.ToString("yyyy-MM-dd HH:mm:ss"));
                 }
