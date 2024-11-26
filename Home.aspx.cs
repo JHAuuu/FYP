@@ -28,14 +28,38 @@ namespace fyp
                     Session["userId"] = userId;
                     Session["UserRole"] = userRole;
                     Session["UserName"] = userName;
+
+                    if (!string.IsNullOrEmpty(userId) && int.TryParse(userId, out int parsedUserId))
+                    {
+                        userid = parsedUserId;
+                    }
+
+                    // Check the role and hide the dropdown if not Admin or Staff
+                    if (userRole != "Admin" && userRole != "Staff")
+                    {
+                        DashDropdown.Visible = false; // Hides the dropdown
+                    }
+
+                }
+                else
+                {
+                    // Anonymous user: ensure safe handling
+                    Session["userId"] = null;
+                    Session["UserRole"] = null;
+                    Session["UserName"] = null;
+
+                    //userid = 0; // Default for anonymous users
+                    // For unauthenticated users, hide the dropdown
+                    DashDropdown.Visible = false;
+                    AccDropdown.Visible = false;
                 }
 
-                if(!string.IsNullOrEmpty(Session["userId"].ToString()))
-                {
-                    userid = Convert.ToInt32(Session["userId"].ToString());
-                }
+
                 
             }
         }
+
+
+
     }
 }
