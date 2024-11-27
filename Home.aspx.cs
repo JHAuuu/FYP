@@ -58,9 +58,6 @@ namespace fyp
                 
             }
         }
-<<<<<<< Updated upstream
-=======
-
 
         public int getNotiCount()
         {
@@ -104,8 +101,6 @@ FROM (
                 return 0;
             }
         }
-
->>>>>>> Stashed changes
 
 
 
