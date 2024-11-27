@@ -261,8 +261,8 @@ C:\Users\wenbi\OneDrive\Documents\GitHub\FYP\bin\System.Threading.Tasks.Extensio
 C:\Users\wenbi\OneDrive\Documents\GitHub\FYP\bin\zxing.xml
 C:\Users\wenbi\OneDrive\Documents\GitHub\FYP\bin\zxing.presentation.xml
 C:\Users\wenbi\OneDrive\Documents\GitHub\FYP\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
-C:\Users\wenbi\OneDrive\Documents\GitHub\FYP\obj\Debug\fyp.csproj.AssemblyReference.cache
 C:\Users\wenbi\OneDrive\Documents\GitHub\FYP\obj\Debug\fyp.csproj.CoreCompileInputs.cache
 C:\Users\wenbi\OneDrive\Documents\GitHub\FYP\obj\Debug\fyp.csproj.CopyComplete
 C:\Users\wenbi\OneDrive\Documents\GitHub\FYP\obj\Debug\fyp.dll
 C:\Users\wenbi\OneDrive\Documents\GitHub\FYP\obj\Debug\fyp.pdb
+C:\Users\wenbi\OneDrive\Documents\GitHub\FYP\obj\Debug\fyp.csproj.AssemblyReference.cache

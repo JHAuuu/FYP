@@ -24,7 +24,6 @@
                     <div class="book-item">
                 <div class="book-details">
                     <div class="book-image">
-                        <%--<img src='<%# Eval("BookImage") %>' alt="Book Cover">--%>
                         <asp:Image ID="imageBook" runat="server"
                                 ImageUrl='<%# Eval("BookImage") != DBNull.Value ? "data:image/png;base64," + Convert.ToBase64String((byte[])Eval("BookImage")) : "images/defaultCoverBook.png" %>'
                                 AlternateText="Book Cover" />
