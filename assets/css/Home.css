@@ -21,3 +21,20 @@
         display: block; /* Removes any gap below images */
         border-radius: 10px; /* Ensures rounded corners match the featured container */
     }
+
+.notification-circle {
+    display: flex; /* Use flexbox to align content */
+    align-items: center; /* Center content vertically */
+    justify-content: center; /* Center content horizontally */
+    background-color: #ff0000; /* Red background */
+    color: #ffffff; /* White text */
+    border-radius: 50%; /* Make the element circular */
+    width: 20px; /* Circle size */
+    height: 20px; /* Circle size */
+    font-size: 12px; /* Adjust text size */
+    font-weight: bold; /* Optional: Bold text */
+    position: absolute; /* Position relative to the <a> */
+    top: 50%; /* Position vertically */
+    right: -25px; /* Move it to the right of the text */
+    transform: translateY(-50%); /* Center the circle vertically with the text */
+}

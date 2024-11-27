@@ -58,6 +58,54 @@ namespace fyp
                 
             }
         }
+<<<<<<< Updated upstream
+=======
+
+
+        public int getNotiCount()
+        {
+            try
+            {
+                if (!String.IsNullOrEmpty(Session["PatronId"].ToString()))
+                {
+                    string userid = Session["PatronId"].ToString();
+                    string query = @"SELECT COUNT(*) AS TotalItems
+FROM (
+    SELECT 
+        i.InboxId AS ItemId
+    FROM Inbox i
+    LEFT JOIN InboxStatus s ON i.InboxId = s.InboxId AND i.UserId = s.UserId
+    WHERE i.UserId = @userId
+
+    UNION ALL
+
+    SELECT 
+        a.AnnouncementId AS ItemId
+    FROM Announcement a
+    LEFT JOIN AnnouncementStatus s ON a.AnnouncementId = s.AnnouncementId
+    WHERE s.UserId = @userId
+) AS CombinedItems;";
+
+                    int getTotalNoti = Convert.ToInt32(DBHelper.ExecuteScalar(query, new string[]{
+                        "userId", userid
+                }));
+
+                    return getTotalNoti;
+                }
+                else
+                {
+                    return 0;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error in getNotiCount: " + ex.Message);
+                return 0;
+            }
+        }
+
+>>>>>>> Stashed changes
 
 
 
