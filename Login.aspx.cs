@@ -196,8 +196,6 @@ namespace fyp
             try
             {
                 string patronQuery = @"SELECT PatronId
-      ,EduLvl
-      ,UserId
   FROM Patron
 WHERE UserId = @userId
 ";
@@ -205,16 +203,13 @@ WHERE UserId = @userId
                 if (!String.IsNullOrEmpty(Session["UserId"].ToString()))
                 {
                     string userid = Session["UserId"].ToString();
-                    DataTable getPatron = DBHelper.ExecuteQuery(patronQuery, new string[]{
+                    int getPatron = Convert.ToInt32(DBHelper.ExecuteScalar(patronQuery, new string[]{
                         "userId", userid
-                    });
+                    }));
 
-                    if(getPatron.Rows.Count > 0)
-                    {
-                        DataRow row = getPatron.Rows[0];
+                    Session["PatronId"] = getPatron;
 
-                        Session["PatronId"] = row["PatronId"].ToString();
-                    }
+
                 }
                 
 

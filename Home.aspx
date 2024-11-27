@@ -108,6 +108,16 @@
 								<ul id="AccDropdown" runat="server">
 									<li id="DashDropdown" runat="server"><a href="DashManagement.aspx">DashBoard</a></li>
 									<li><a href="Announcement.aspx">Inbox</a></li>
+=======
+								<a href="#" onclick="checkLogin()">Account</a>
+								<ul id="AccDropdown" runat="server">
+									<li id="DashDropdown" runat="server"><a href="DashManagement.aspx">DashBoard</a></li>
+									 <li><a href="Announcement.aspx" style="position: relative; display: inline-flex;">Inbox & 
+                                Announcement 
+                                <span id="notificationCircle" class="notification-circle" 
+                                    style="<%# (getNotiCount() > 0 ? "display: flex;" : "display: none;") %>"><%=getNotiCount() %></span>
+                                </a></li>
+>>>>>>> Stashed changes
 									<li><a href="FavouriteGroup.aspx">Favourite Books</a></li>
 									<li><a href="History.aspx">History</a></li>
 									<li><a href="profile.aspx">Profile</a></li>

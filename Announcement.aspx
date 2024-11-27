@@ -20,7 +20,9 @@
 
                     <asp:Repeater ID="rptMessage" runat="server" >
                         <ItemTemplate>
-                            <div class="message" onclick="openModal('<%# Eval("Title") %>', '<%# Eval("Content") %>','<%# Eval("DateTime") %>','<%# Eval("ItemType") %>')">
+                            <div id="<%# Eval("ItemType") %><%# Eval("ItemId") %>" 
+                                class="message <%# Convert.ToBoolean(Eval("IsUnread")) ? "unread" : "" %>" 
+                                onclick="openModal('<%# Eval("Title") %>', '<%# Eval("Content") %>','<%# Eval("DateTime") %>','<%# Eval("ItemType") %>','<%# Eval("ItemId") %>')">
                         <div class="message-title"> 
                             <span class="title-text"><%# Eval("ItemType") %>: <%# Eval("Title") %></span>
                             <span class="message-datetime"><%# Eval("DateTime") %></span>
@@ -42,7 +44,7 @@
                 Content Placeholder
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn-category btn-category-save" id="closeModal">Close</button>
+                <button type="button" class="btn-category btn-category-save" id="closeModal">OK</button>
             </div>
         </div>
     </div>
@@ -64,7 +66,7 @@
         <script src="assets/js/bootstrap.min.js"></script>
     <script>
         // Function to open the modal
-        function openModal(title, content, time, type) {
+        function openModal(title, content, time, type, id) {
             // Update modal title and content
             document.getElementById('modalTitle').textContent = type + " : " + title + " - " + time ;
             document.getElementById('modalContent').textContent = content;
@@ -75,11 +77,18 @@
             modal.style.display = 'block';
             document.body.classList.add('modal-open');
 
-            // Add backdrop
-            const backdrop = document.createElement('div');
-            backdrop.className = 'modal-backdrop fade show';
-            backdrop.id = 'modalBackdrop';
-            document.body.appendChild(backdrop);
+            $.ajax({
+                url: 'Announcement.aspx/changeStatus',
+                type: 'POST',
+                data: JSON.stringify({ table: type, itemId: id }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response.d === "SUCCESS") {
+                        document.getElementById(type + id).classList.remove('unread');
+                    }
+                }
+            });
         }
 
         // Function to close the modal
@@ -89,11 +98,6 @@
             modal.style.display = 'none';
             document.body.classList.remove('modal-open');
 
-            // Remove backdrop
-            const backdrop = document.getElementById('modalBackdrop');
-            if (backdrop) {
-                document.body.removeChild(backdrop);
-            }
         }
 
         // Attach close event to the button
