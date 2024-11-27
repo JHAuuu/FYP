@@ -35,26 +35,31 @@ namespace fyp
             try
             {
                 string query = @"SELECT 
-    InboxId AS ItemId,
-    InboxTitle AS Title,
-    InboxContent AS Content,
-    SendAt AS DateTime,
+    i.InboxId AS ItemId,
+    i.InboxTitle AS Title,
+    i.InboxContent AS Content,
+    i.SendAt AS DateTime,
     'Inbox' AS ItemType,
-    UserId
-FROM Inbox
-WHERE UserId = @userId
+    i.UserId,
+    CASE WHEN s.[Read] = 0 THEN 1 ELSE 0 END AS IsUnread
+FROM Inbox i
+LEFT JOIN InboxStatus s ON i.InboxId = s.InboxId AND i.UserId = s.UserId
+WHERE i.UserId = @userId
 
 UNION ALL
 
 SELECT 
-    AnnouncementId AS ItemId,
-    Title,
-    Content,
-    DateTime,
+    a.AnnouncementId AS ItemId,
+    a.Title,
+    a.Content,
+    a.DateTime,
     'Announcement' AS ItemType,
-    NULL AS UserId
-FROM Announcement
-ORDER BY DateTime DESC;
+    NULL AS UserId,
+    CASE WHEN s.[Read] = 0 THEN 1 ELSE 0 END AS IsUnread
+FROM Announcement a
+LEFT JOIN AnnouncementStatus s ON a.AnnouncementId = s.AnnouncementId
+WHERE s.UserId = @userId
+ORDER BY DateTime DESC, ItemId DESC;
 ";
                 DataTable dt = DBHelper.ExecuteQuery(query, new string[]
                 {
@@ -74,5 +79,35 @@ ORDER BY DateTime DESC;
             }
         }
 
+
+        [System.Web.Services.WebMethod(Description = "Change Status")]
+        public static string changeStatus(string table, string itemId)
+        {
+            try
+            {
+                string tableName = table + "Status";
+                string IdName = table + "Id";
+                string query = $"UPDATE {tableName} SET [Read] = 1 WHERE {IdName} = @id AND UserId = @userid";
+
+                int success = DBHelper.ExecuteNonQuery(query, new string[]{
+                    "id",itemId,
+                    "userid",userid.ToString()
+
+                });
+                if(success > 0)
+                {
+                    return "SUCCESS";
+                }
+                else
+                {
+                    return "Fail";
+                }
+                
+            }
+            catch(Exception ex)
+            {
+                return "Fail";
+            }
+        }
     }
 }

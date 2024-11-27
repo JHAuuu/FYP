@@ -23,7 +23,14 @@
                     <div class="book-item">
                 <div class="book-details">
                     <div class="book-image">
+<<<<<<< Updated upstream
                         <img src='<%# Eval("BookImage") %>' alt="Book Cover">
+=======
+                        <%--<img src='<%# Eval("BookImage") %>' alt="Book Cover">--%>
+                        <asp:Image ID="imageBook" runat="server"
+                                ImageUrl='<%# Eval("BookImage") != DBNull.Value ? Eval("BookImage") : "images/defaultCoverBook.png" %>'
+                                AlternateText="Book Cover" />
+>>>>>>> Stashed changes
                     </div>
                    <div class="book-info">
                     <a href="BookDetail.aspx">

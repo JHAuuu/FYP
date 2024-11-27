@@ -10,6 +10,89 @@
     <noscript>
         <link rel="stylesheet" href="assets/css/noscript.css" />
     </noscript>
+<<<<<<< Updated upstream
+=======
+    <style>
+		.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5); /* Black with opacity */
+}
+
+/* Modal content */
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 500px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+/* Close button */
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Buttons */
+.modal-buttons {
+    margin-top: 20px;
+}
+
+/* LOGIN button */
+.btn-primary {
+    background-color: black;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    opacity: 0.8;
+}
+.notification-circle {
+  display: flex; /* Use flexbox to align content */
+  align-items: center; /* Center content vertically */
+  justify-content: center; /* Center content horizontally */
+  background-color: #ff0000; /* Red background */
+  color: #ffffff; /* White text */
+  border-radius: 50%; /* Make the element circular */
+  width: 20px; /* Circle size */
+  height: 20px; /* Circle size */
+  font-size: 12px; /* Adjust text size */
+  font-weight: bold; /* Optional: Bold text */
+  position: absolute; /* Position relative to the <a> */
+  top: 50%; /* Position vertically */
+  right: -25px; /* Move it to the right of the text */
+  transform: translateY(-50%); /* Center the circle vertically with the text */
+}
+
+	</style>
+>>>>>>> Stashed changes
 </head>
 <body class="left-sidebar is-preload">
     <div id="page-wrapper">
@@ -31,9 +114,20 @@
                     <li><a href="recommendation.aspx">Recommendation Books</a></li>
                     <li><a href="LoanList.aspx">Loan Books</a></li>
                     <li>
+<<<<<<< Updated upstream
                         <a href="#">Account</a>
                         <ul>
                             <li><a href="Announcement.aspx">Inbox</a></li>
+=======
+                        <a href="#" onclick="checkLogin()">Account</a>
+                        <ul id="AccDropdown" runat="server">
+							<li id="DashDropdown" runat="server"><a href="DashManagement.aspx">DashBoard</a></li>
+                            <li><a href="Announcement.aspx" style="position: relative; display: inline-flex;">Inbox & 
+                                Announcement 
+                                <span id="notificationCircle" class="notification-circle" 
+                                    style="<%# (getNotiCount() > 0 ? "display: flex;" : "display: none;") %>"><%=getNotiCount() %></span>
+                                </a></li>
+>>>>>>> Stashed changes
                             <li><a href="favouriteGroup.aspx">Favourite Books</a></li>
                             <li><a href="History.aspx">History</a></li>
                             <li><a href="profile.aspx">profile</a></li>
