@@ -76,7 +76,7 @@ INNER JOIN
     Book ON BookCopy.BookId = Book.BookId
 WHERE 
     Loan.PatronId = @userId
-    AND (Loan.Status = 'loaning');";
+    AND (Loan.Status = 'loaning') AND CAST(GETDATE() AS DATE) <= CAST(Loan.EndDate AS DATE) AND Loan.LatestReturn IS NULL;";
                 DataTable originalDt = DBHelper.ExecuteQuery(query, new string[]{
                     "userId", userid.ToString()
                 });
@@ -206,7 +206,7 @@ WHERE PatronId = @userId
                 string query = @"SELECT 
     p.LoanId, 
     p.TotalFine, 
-    p.LatestReturn, 
+    l.LatestReturn, 
     p.DatePayed, 
     p.PunishStatus,
     l.StartDate, 
@@ -222,7 +222,7 @@ JOIN BookCopy bc ON l.BookCopyId = bc.BookCopyId
 JOIN Book b ON bc.BookId = b.BookId
 WHERE l.PatronId = @userId
   AND p.PunishStatus = 'Unpaid'
-AND p.LatestReturn IS NOT NULL;
+AND l.LatestReturn IS NOT NULL;
 
 ";
                 DataTable originalDt = DBHelper.ExecuteQuery(query, new string[]{
@@ -316,6 +316,7 @@ AND p.LatestReturn IS NOT NULL;
             try
             {
                 string query = @"SELECT 
+    l.LatestReturn,
     l.StartDate, 
     l.EndDate, 
     l.Status, 
@@ -327,8 +328,8 @@ FROM Loan l
 JOIN BookCopy bc ON l.BookCopyId = bc.BookCopyId
 JOIN Book b ON bc.BookId = b.BookId
 WHERE l.PatronId = @userId
-AND l.LatestReturn IS NULL
-AND l.Status = 'lateReturn';
+AND CAST(GETDATE() AS DATE) > CAST(l.EndDate AS DATE) AND l.LatestReturn IS NULL
+AND l.Status = 'loaning';
 
 ";
                 DataTable originalDt = DBHelper.ExecuteQuery(query, new string[]{
@@ -336,11 +337,7 @@ AND l.Status = 'lateReturn';
                 });
 
                 DataTable dt = new DataTable();
-                dt.Columns.Add("LoanId", typeof(string));
-                dt.Columns.Add("TotalFine", typeof(string));
                 dt.Columns.Add("LatestReturn", typeof(string));
-                dt.Columns.Add("DatePayed", typeof(string));
-                dt.Columns.Add("PunishStatus", typeof(string));
                 dt.Columns.Add("StartDate", typeof(string));
                 dt.Columns.Add("EndDate", typeof(string));
                 dt.Columns.Add("Status", typeof(string));
@@ -536,7 +533,7 @@ AND l.Status = 'lateReturn';
             {
                 string query = @"UPDATE Punishment
 SET PunishStatus = 'Paid',
-    DatePayed = GETDATE() 
+    DateP   ayed = GETDATE() 
 WHERE LoanId IN (
     SELECT p.LoanId
     FROM Punishment p
